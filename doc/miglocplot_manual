@@ -1,9 +1,9 @@
 ********************************
-* PLOT_MIGLOC3D PACKAGE	*
+* SPLOT PACKAGE	*
 ********************************
 CHANGE HISTORY:
 ===============
-HNG, Jan 13,2015; HNG, Apr 22,2010; 
+HNG, Jun 08,2021; HNG, Jan 13,2015; HNG, Apr 22,2010; 
 
 DEVELOPER
 =========
@@ -34,11 +34,11 @@ computed by 3d finite difference eikonal solver (Podvin and Lecomte, 1991) if on
 
 PACKAGE STRUCTURE
 =================
-- migloc
+- splot
 	- doc
 	- src
 	- savefigure
-migloc	: this is the parent directory and contains all necessary files/folders
+splot	: this is the parent directory and contains all necessary files/folders
 doc	: contains documentations files
 src	: contains all source files and folders
 savefigure: contains all savefigure files (this is no longer necessary for this package, but it is necessary for plot_migloc3d)
