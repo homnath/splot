@@ -1,4 +1,4 @@
-# miglocplot
+# splot
 
 This package plots various types of seimograms and DE location results obtained by using
 migloc3d package (Gharti et al 2010). Data sources 
@@ -9,4 +9,4 @@ package MIMO (Oye and Roth, 2003), 4) SEG2 files, 5) SEGY files, and 6) MAT file
 DE result of migloc3d . If you want to process other types of data, you can look at the file 
 load_data.m and add/modify as necessary.
 
-Please see doc/miglocplot_manual for more detail.
+Please see doc/splot_manual for more detail.
