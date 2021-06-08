@@ -1,0 +1,36 @@
+# Preliminary information
+# type: 0: plot seismo, 1: plot de result
+preinfo type=0, plot=1, save=1, figform=png, figres=600, fighead=../output/tunnel_rectangle1
+
+# Receivers data information
+# 0: e3d computation; 1: MIMO .mat file
+# rdata type=0, fheader=~homnath/research/e3d/output/py_3d_strike0_f250, rfile=../input/py_3d_receivers.dat, nrec=18
+#rdata type=1, mfile= ~homnath/Work/results/MAN_2006-041:14.23.51.3.wfdisc.mat, rfile=../input/py_receivers_actual.dat
+rdata type=3, fheader=/home/hgharti/scratch-network/workspace/specfem3d/OUTPUT_FILES, sfile=/home/hgharti/scratch-network/workspace/specfem3d/DATA/STATIONS, ext=semv
+
+# Processing information
+# Select receiver option (select - 0: all->'all'; 1: indicial selection-> r1,rstep,r2; 2: Circular selection-> refx,rad; 3: list from file-> rnfile)
+# Receiver selection as mentioned above
+# norm=(0: no normalization, 1: trace max, 2: geophone max, 3: absolute max, 4: first trace mean and absolute maximum)
+process select=1, r1=1, rstep=1, r2=19, comp=ENZ, tclip=[0 0], noise=0, ffreq=[400 800], ftype=2, forder=3
+
+# norm (0: trace maximum, 1: geophone maximum, 2: absolute maximum, 3: trace mean and absolute maximum)
+# algn=4, area=4 smart choice
+# type= (0: trace, 1: rotated trace, 2: envelop, 3: rotated envelop, 4: SNR, 5: polarization)
+#seisplot type=0, norm=2, amp=15, clipamp=15, superpose=1, onset=0, align=0
+seisplot type=0, norm=1, amp=15, clipamp=15, superpose=1, onset=0, align=0, area=0
+#seisplot type=2, norm=1, amp=15, clipamp=15,  superpose=0, onset=3, align=0
+#seisplot type=3, norm=0, amp=15, clipamp=15,  superpose=0, onset=3, align=4, area=4, twin=[0.008 0.008], rect=1
+#seisplot type=4, lta=0.2, sta=0.03, norm=1, amp=15, clipamp=15,  superpose=0, onset=3, align=0, area=0
+#seisplot type=5, twin=0.02, move=5, map=1, azimuth=1, r1=40, rstep=1, r2=41
+
+# Model parameters
+#model dh=2.0, ox=[0; 0; 0], nx=[300; 260; 260], src=[0.100;0.399;0.188; 0.0], lookup=0, vp=5.500, vs=3.175
+model dh=0.002, ox=[0; 0; 0], nx=[300; 260; 260], src=[-0.0090425;-0.0051168;0.001811; 0.0], lookup=1, &
+pheader=/data/homnath/fdtimes/output/aaknes_burried_more_lookup_p_arrival_time_source-receiver, &
+sheader=/data/homnath/fdtimes/output/aaknes_burried_more_lookup_s_arrival_time_source-receiver
+
+#deplot range=[-802.0 805.0; -1000.0 1000.0; 6500 7000; -0.05 0.06], \
+#mfile=../output/total_mig3d_selected_30ft_location_optimization_result.mat, \
+#lunit=ft, rtick=[2; 2; 2; -2], ntick=[5; 5; 5; 6], \
+#lastpop=1, allpop=1, par_gen=1, par_of=1, par_par=1, gen_of=1, gen_sd=1, anim=1

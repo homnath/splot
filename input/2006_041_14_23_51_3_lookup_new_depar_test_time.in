@@ -1,0 +1,24 @@
+# Model parameters
+model dh=0.002, ox=[0; 0; 0], nx=[312; 312; 312], lookup=1, \
+pheader=../../fdtimes/output/py_3d_lookup_p_arrival_time_source-receiver, \
+sheader=../../fdtimes/output/py_3d_lookup_s_arrival_time_source-receiver 
+
+# Receivers data information
+# 0: e3d computation; 1: MIMO .mat file
+#rdata type=0, fheader=../../e3d/output/py_3d_strike0_f250, rfile=../input/py_3d_receivers.dat, nrec=18
+rdata type=1, mfile= ~homnath/Work/results/MAN_2006-041:14.23.51.3.wfdisc.mat, rfile=../input/py_receivers_actual.dat
+
+# Processing information
+# Select receiver option (select - 0: all->'all'; 1: indicial selection-> r1,rstep,r2; 2: Circular selection-> refx,rad; 3: list from file-> file name)
+# Receiver selection as mentioned above
+process select=1, r1=1, rstep=1, r2=18, comp=ENZ, tclip=[0 0], noise=0, ffreq=[20 400], ftype=2, forder=3
+
+# Computation parameter (type - 0: stack field; 1: location)
+compute type=0, twinp=0.012, twins=0.012, proj=1, phase=0, nmonte=0, njack=0 
+
+# Stack field parameters
+sfield sgrid=0, x1=0.358, xstep=0.001, x2=0.358, y1=0.383, ystep=0.001, y2=0.383, z1=0.387, zstep=0.001, z2=0.387, t1=-1, tstep=0.001, t2=1
+
+# Differential evolution location parameters
+delocate type=9, f=0.4, c=0.6, np=60, range=[0 0.622; 0 0.622; 0 0.622; -1 1], quant=[0.001; 0.001; 0.001; 0.001], \
+init=[0.311; 0.311; 0.311; 0.0], ngen=50, tmax=4000.0, sds=0.002, sdt=0.002, plotfig=1, savefig=1

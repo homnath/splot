@@ -1,0 +1,113 @@
+# Global information
+#=================================
+# Seismogram plot type 1: horizontal 2: vertical
+1
+# Normalization: on trace (0), geophone (1), or total maximum (2)
+0
+# Plot onsets? 0: No, 1: Yes
+1
+# Model information
+#=================================
+# Total grid size (dh[km]/l/m/n)
+0.2
+21
+24
+23
+# Origin [km]
+0.0
+0.0
+0.0
+#Velocity model P and S (km/s)
+3.5
+1.9
+# Arrival time lookup table header without counter and extension(.vti)
+/seismo/projects/resmon/FDtimes_application/fdtimes/completed_lookup_tables/clair_p_arrival/clair_p_arrival_time_source-receiver_new
+/seismo/projects/resmon/FDtimes_application/fdtimes/completed_lookup_tables/clair_s_arrival/clair_s_arrival_time_source-receiver_new
+# Use lookup table? 0: no (homogeneous model), 1: yes(less memory slower speed), 2: yes (large memory faster speed)
+2
+# Mimo seismogram information
+#=================================
+# Number of receivers
+746
+# file name of receiver list
+/seismo/projects/resmon/FDtimes_application/fdtimes/input/clair_sources.txt
+# file name of mimo result
+/seismo/projects/resmon/data/CLAIR_LOFS/File82022.mat
+# Clip time
+6 15
+# Filter band
+35 85
+# Select receiver option (0: all->'all'; 1: indicial selection-> rec1,rec_step,rec2; 2: Circular selection-> ref_x,ref_y,ref_z,rad; 3: list from file-> file name)
+1
+# Receiver selection as mentioned above
+40 1 77
+# Computation information
+#=================================
+# Random noise percentage
+0
+# P and S time window in s
+0.04
+0.04
+# Do you want to plot figures? 0: No, 1: yes
+0
+# Do you want to save figures? 0: No, 1: eps, 2: png, 3: jpeg, 4: pdf
+0
+# Do you want to save major stacking data? 0: No, 1: Yes
+1
+# Computation type (1: Stack field only, 2: Location only, 3: Both)
+1
+# Projection of traces onto LTQ system (0: Off, 1: On)
+1
+# Which phase to use for location? (0: both p and s, 1: p only, 2: s only)
+0
+# Choose component/s to process (E, N, Z or combination among them e.g. EN, ENZ, NZ etc.)
+ENZ
+# Differential evolution parameters
+#==================================
+# strategy (1 to 9 see evolution.m for detail)
+9
+# Mutation factor
+0.4
+# Cross-over probability
+0.6
+# Parameters range (x[km]/y[km]/z[km]/t[s])
+0 0.622
+0 0.622
+0 0.622
+-1. 1.
+# Quantization (x[km]/y[km]/z[km]/t[s])
+0.001
+0.001
+0.001
+0.001
+# Initial values  (x[km]/y[km]/z[km]/t[s])
+0.311
+0.311
+0.311
+0.0
+# Number of population members (recommended 10*D)
+60
+# Maximum number of iterations
+50
+# Maximum time allowed [s]
+4000.
+# Maximum standard deviation allowed ([km]/[s])
+0.002
+0.002
+# Stack parameters
+#==================================
+# Define stack region within the domain of above gridding (l1/lstep/l2/m1/mstep/m2/n1/nstep/n2) need to use 1 if one step only
+0
+1
+20
+0
+1
+23
+0
+1
+22
+# Define origin time for stack (s) t1/t_step/t2
+6.00
+0.05
+15
+#=================================

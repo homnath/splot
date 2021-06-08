@@ -1,0 +1,102 @@
+# Global information
+#=================================
+# Seismogram plot type 1: horizontal 2: vertical
+1
+# Normalization: on trace (0), geophone (1), or total maximum (2)
+0
+# Plot onsets? 0: No, 1: Yes
+1
+# Model information
+#=================================
+# Total grid size (dh[km]/l/m/n)
+0.002
+312
+312
+312
+# Origin [km]
+8.018
+1.944
+0.886
+#Velocity model P and S (km/s)
+5.5
+3.5
+# Arrival time lookup table header without counter and extension(.vti)
+../../fdtimes/output/py_3d_lookup_p_arrival_time_source-receiver
+../../fdtimes/output/py_3d_lookup_s_arrival_time_source-receiver
+# Use lookup table? 0: no (homogeneous model), 1: yes(less memory slower speed), 2: yes (large memory faster speed) 
+1
+# Mimo seismogram information
+#=================================
+# Number of receivers
+18
+# file name of receiver list
+../input/py_receivers_actual.dat
+# file name of mimo result
+../../../Work/results/MAN_2006-041:14.23.51.3.wfdisc.mat
+# Filter band
+0 0
+# Computation information
+#=================================
+# Random noise percentage
+0
+# P and S time window in s
+0.012
+0.012
+# Do you want to plot figures? 0: No, 1: yes
+0
+# Do you want to save figures? 0: No, 1: eps, 2: png, 3: jpeg, 4: pdf
+0
+# Do you want to save major stacking data? 0: No, 1: Yes
+1
+# Computation type (1: Stack field only, 2: Location only, 3: Both)
+2
+# Projection of traces onto LTQ system (0: Off, 1: On)
+1
+# Which phase to use for location? (0: both p and s, 1: p only, 2: s only)
+0
+# Choose components
+ENZ
+# Differential evolution parameters
+#==================================
+# strategy (1 to 9 see evolution.m for detail)
+9
+# Mutation factor
+0.4
+# Cross-over probability
+0.9
+# Parameters range (x[km]/y[km]/z[km]/t[s])
+8.018 8.640
+1.944 2.566
+0.886 1.508
+-1. 1.
+# Quantization (x[km]/y[km]/z[km]/t[s])
+0.001
+0.001
+0.001
+0.001
+# Initial values  (x[km]/y[km]/z[km]/t[s])
+8.329
+2.255
+1.197
+0.0
+# Number of population members (recommended 10*D)
+60
+# Maximum number of iterations
+50
+# Maximum time allowed [s]
+4000.
+# Maximum standard deviation allowed ([km]/[s])
+0.002
+0.002
+# Stack parameters
+#==================================
+# Define stack region within the domain of above gridding (l1/l2/m1/m2/n1/n2)
+0
+311
+0
+311
+194
+194
+# Define origin time for stack (s)
+0.27604
+#=================================

@@ -1,0 +1,26 @@
+# Preliminary information
+# type: 0: plot seismo, 1: plot de result
+preinfo type=1, plot=1, save=0, figform=png, figres=600, fighead=../output/test
+
+# Receivers data information
+# 0: e3d computation; 1: MIMO .mat file; 2: SEG2 file; 3: SPECFEM3D synthetic computation, 4: SEGY file
+rdata type=1, mfile=/staff/peng/MIMO/Works/test6/results/MAN_f_004575.rcd.mat
+
+# Processing information
+# Select receiver option (select - 0: all->'all'; 1: indicial selection-> r1,rstep,r2; 2: Circular selection-> refx,rad; 3: list from file-> file name)
+# Receiver selection as mentioned above
+process select=0, comp=ENZ, tclip=[3 5], noise=0, ffreq=[50 400], ftype=2, forder=4, erpf=0
+
+# norm (0: trace maximum, 1: geophone maximum, 2: absolute maximum, 3: trace mean and absolute maximum)
+# algn=4, area=4 smart choice
+# type= (0: trace, 1: rotated trace, 2: envelop, 3: rotated envelop, 4: SNR, 5: polarization)
+seisplot type=0, norm=3, amp=15, clipamp=15, superpose=2, onset=3, align=0
+seisplot type=3, norm=3, amp=15, clipamp=15, superpose=0, onset=3, align=0, area=4, twin=[0.02; 0.02]
+
+deplot range=[-500. 0.; -500. 0.; 500. 2000; 2 5], &
+mfile=../output/aguada_test_new_optimization_result.mat, &
+lunit=m, rtick=[2; 2; 2; -2], ntick=[5; 5; 5; 6], &
+lastpop=1, allpop=1, par_gen=1, par_of=1, par_par=1, gen_of=1, gen_sd=1
+
+# Model parameters
+model dh=20, ox=[0; 0; 0], nx=[100; 100; 150], src=[-56; -234; 1792; 3.631], lookup=0, vp=4500, vs=2700
