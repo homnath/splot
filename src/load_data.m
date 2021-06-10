@@ -4,7 +4,7 @@ function [DATA]=load_data(rdata,varargin)
 %   HNG, Nov 11,2009
 
 if nargin>1 && varargin{1}
-    load cache_file;
+    load(cache_file,'DATA');
     return;
 end
 
@@ -82,7 +82,7 @@ if rdata.type==0 % Synthetic data
         end
     end
 elseif rdata.type==1 % MIMO data
-    DATA=[];
+    %DATA=[];
     load(rdata.mfile,'DATA');
     % remove unnecessary fields of DATA
     DATA=rmfield(DATA,{'filename','subset','flip','statname','plotmask','procmask','datestring'});
@@ -125,7 +125,7 @@ elseif rdata.type==2 % SEG2 data
       nchan=size(data,2);
       
       %get the date from the file descriptor block
-      [leftstr,rightstr]=strtok(fdb(strmatch('ACQUISITION_DATE',fdb),:));
+      [~,rightstr]=strtok(fdb(strmatch('ACQUISITION_DATE',fdb),:));
 
 
       %%%%changes MRO 5.12.05
@@ -143,13 +143,13 @@ elseif rdata.type==2 % SEG2 data
 
       %get the time from the file descriptor block
       %and update the date vector dv (y,m,d,h,m,s)
-      [leftstr,rightstr]=strtok(fdb(strmatch('ACQUISITION_TIME',fdb),:));
+      [~,rightstr]=strtok(fdb(strmatch('ACQUISITION_TIME',fdb),:));
       ac_time = rightstr;
       dv = datevec([ac_date ac_time]);
 
       %get the second fraction from the file descriptor block
       %and update the date vector dv (y,m,d,h,m,s.frac)
-      [leftstr,rightstr]=strtok(fdb(strmatch('ACQUISITION_SECOND_FRACTION',fdb),:));
+      [~,rightstr]=strtok(fdb(strmatch('ACQUISITION_SECOND_FRACTION',fdb),:));
       if ~isempty(rightstr)
         dv(6)=dv(6)+str2double(rightstr);
         sec_from_fdb=dv(6);
@@ -163,17 +163,17 @@ elseif rdata.type==2 % SEG2 data
       'geonum',0,'nsamp',0,'t0',0.0,'xyz',[NaN NaN NaN]),1,nchan);
 
       for i=1:nchan
-        [leftstr,rightstr]=strtok(tdb{i}(strmatch('DELAY' ,tdb{i}),:));
+        [~,rightstr]=strtok(tdb{i}(strmatch('DELAY' ,tdb{i}),:));
         if ~isempty(rightstr)
           delay=str2double(rightstr);
           dv(6)=sec_from_fdb+delay;
         end
-        [leftstr,rightstr]=strtok(tdb{i}(strmatch('CHANNEL_NUMBER',tdb{i}),:));
+        [~,rightstr]=strtok(tdb{i}(strmatch('CHANNEL_NUMBER',tdb{i}),:));
         chnum=str2double(rightstr);
         DATA(i).chnum=chnum;
         DATA(i).geonum=geonum(chnum);
         DATA(i).t0=(datenum(dv)-datenum(pivotyear,1,1,0,0,0))*86400;
-        [leftstr,rightstr]=strtok(tdb{i}(strmatch('SAMPLE_INTERVAL' ,tdb{i}),:));
+        [~,rightstr]=strtok(tdb{i}(strmatch('SAMPLE_INTERVAL' ,tdb{i}),:));
         DATA(i).dt=str2double(rightstr);
         % [leftstr,rightstr]=strtok(tdb{i}(strmatch('CHANNEL_NUMBER',tdb{i}),:));
         % chnum(i)=str2double(rightstr);
@@ -214,38 +214,55 @@ elseif rdata.type==3 % Synthetic data produced by SPECFEM3D
         rdata.fheader(end+1)='/';
     end    
     
-    comp_read=['X','Y','Z']; % only for SPECFEM3D CARTESIAN
-    comp=['E','N','Z']; % but we always process as ENZ components
+    comp_read=['X','Y','Z','P']; % only for SPECFEM3D CARTESIAN
+    comp=['E','N','Z','P']; % but we always process as ENZ components
     
     % Read only the two time values of first file
-    fnamex=strcat(rdata.fheader,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
-    if ~exist(fnamex,'file')
-        error('file ''%s'' not found!',fnamex);
-    end
-    inpf=fopen(fnamex,'r');
-    t_info=fscanf(inpf,'%f %*f',[1 inf]);
-    fclose(inpf);
-    t0=t_info(1);
-    dt=t_info(2)-t_info(1);
-    nsamp=length(t_info);
-    clear t_info;
-    
+%     fnamex=strcat(rdata.fheader,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
+%     if ~exist(fnamex,'file')
+%         error('file ''%s'' not found!',fnamex);
+%     end
+%     inpf=fopen(fnamex,'r');
+%     t_info=fscanf(inpf,'%f %*f',[1 inf]);
+%     fclose(inpf);
+%     t0=t_info(1);
+%     dt=t_info(2)-t_info(1);
+%     nsamp=length(t_info);
+%     clear t_info;
+    initialized=false;
     ichan=0;
     for i_rec=1:rdata.nrec
-        for i_chan=1:3
+        for i_chan=1:4
             ichan=ichan+1;
-            fnamex=strcat(rdata.fheader,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
+            fnamex=strcat(rdata.fheader,char(bulk{2}(i_rec)),'.',char(bulk{1}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
             if ~exist(fnamex,'file')
-                error('file ''%s'' not found!',fnamex);
+                warning('file ''%s'' not found!',fnamex);
+                DATA (ichan).chnum=[];
+                DATA(ichan).geonum=[];            
+                DATA(ichan).t0=[];
+                DATA(ichan).dt=[];
+                DATA(ichan).nsamp=[];
+                DATA(ichan).comp=[];
+                DATA(ichan).xyz=[];
+                DATA(ichan).data=[];
+                continue;
             end
-            inpf=fopen(fnamex,'r');
-            DATA(ichan).chnum=ichan;
+            fnamex
+            inpf=fopen(fnamex,'r');            
+            DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
+            % Extract t0, dt, and nsamp for the first time.
+            if ~initialized            
+                initialized = true;
+                t0=DATA(ichan).data(1);
+                dt=DATA(ichan).data(2)-DATA(ichan).data(1);
+                nsamp=length(DATA(ichan).data);
+            end
+            DATA (ichan).chnum=ichan;
             DATA(ichan).geonum=i_rec;            
             DATA(ichan).t0=t0;
             DATA(ichan).dt=dt;
             DATA(ichan).nsamp=nsamp;
             DATA(ichan).comp=comp(i_chan);
-            DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';            
             DATA(ichan).xyz=[bulk{3}(i_rec) bulk{4}(i_rec) bulk{5}(i_rec)];
             fclose(inpf);  
         end 
@@ -264,8 +281,8 @@ elseif rdata.type==32 % Synthetic data produced by SPECFEM3D and take the differ
         rdata.fheader1(end+1)='/';
     end
     
-    comp_read=['X','Y','Z']; % only for SPECFEM3D CARTESIAN
-    comp=['E','N','Z']; % but we always process as ENZ components
+    comp_read=['X','Y','Z','P']; % only for SPECFEM3D CARTESIAN
+    comp=['E','N','Z','P']; % but we always process as ENZ components
     
     % Read only the two time values of first file
     fnamex=strcat(rdata.fheader,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
@@ -296,7 +313,7 @@ elseif rdata.type==32 % Synthetic data produced by SPECFEM3D and take the differ
     
     ichan=0;
     for i_rec=1:rdata.nrec
-        for i_chan=1:3
+        for i_chan=1:4
             ichan=ichan+1;
             fnamex=strcat(rdata.fheader,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
             fnamex1=strcat(rdata.fheader1,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);

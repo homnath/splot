@@ -27,7 +27,7 @@ inpf=fopen(fname,'r');
 % Default values
 preinfo_stat=0; rdata_stat=0; process_stat=0; seisplot_stat=0; deplot_stat=0; model_stat=0; 
 rdata.nrec=[]; rdata.rfile=[];
-process.select=0; process.xrec=0; process.comp='ENZ'; process.tclip=[0 0];  process.noise=0; process.ffreq=[0 0]; process.norm=0;
+process.select=0; process.xrec=0; process.comp='ENZP'; process.tclip=[0 0];  process.noise=0; process.ffreq=[0 0]; process.norm=0;
 process.erpf=0; process.ncoef=[]; process.tnoise=[]; process.sort_src=[];
 seisplot=[];
 

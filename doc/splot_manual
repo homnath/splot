@@ -59,9 +59,9 @@ Process -> x: East, y: North, z: Up
 USAGE
 =====
 - prepare an appropriate input file as described in INPUT section below (you can put in any suitable location). 
-- open a matlab session and go to the path migloc/src.
-- run the command: plot_migloc3d(inputfilename) 
-- e.g. plot_migloc3d('../input/test.in')
+- open a matlab session and go to the path splot/src.
+- run the command: run_splot(inputfilename) 
+- e.g. run_splot('../input/test.in')
 
 
 INPUT FILE

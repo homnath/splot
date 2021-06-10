@@ -50,6 +50,11 @@ if isempty(strfind(process.comp,'Z'))
     DATA(ichan_off)=[];
 end
 
+if isempty(strfind(process.comp,'P'))
+    ichan_off=[DATA.comp]=='P';
+    DATA(ichan_off)=[];
+end
+
 if length(DATA)<1
     error('everything is thrown! check your process options.');
 end
