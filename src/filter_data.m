@@ -10,18 +10,36 @@ dt=t(2)-t(1);
 % Frequency filter parameters
 %   forder  : order of butterworth  
 %   ffreq   : cut off frequency(ies)
+%             Low pass  : ffreq(2)
+%             Band pass : ffreq
+%             High Pass : ffreq(1)
 %   dt      : time increment
 %   ftype   : filter type (1: low, 2: band, 3: high) 
 %   fcausal : causal (1),  acausal (2)
 forder=3;
-ffreq=[0 500];
-ftype=2;
 fcasual=1;
 
-data_filt=butterworth(forder,ffreq,dt,ftype,fcasual,data);
+% Low pass
+ftype=1;
+ffreq=[0 500];
+data_low=butterworth(forder,ffreq,dt,ftype,fcasual,data);
+
+% Band pass
+ftype=2;
+ffreq=[10 500];
+data_band=butterworth(forder,ffreq,dt,ftype,fcasual,data);
+
+% High pass
+ftype=3;
+ffreq=[10 0];
+data_high=butterworth(forder,ffreq,dt,ftype,fcasual,data);
 
 figure
 hold on
 plot(t,data,'k');
-plot(t,data_filt,'b');
-legend('Original data','Filtered data')
+plot(t,data_low,'b');
+plot(t,data_band,'g');
+plot(t,data_high,'r');
+xlabel('Time (s)')
+ylabel('Pressure (Pa)')
+legend('Original Data','Low Pass','Band Pass','High Pass')
