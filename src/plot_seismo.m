@@ -225,16 +225,16 @@ clear DATA ichan irec irec_process tf rec_process geonum_correct
 if max(process.ffreq)>0
     for i_rec=1:nrec
         if norm(datax(i_rec).data)~=0
-            datax(i_rec).data=buttwo(process.forder,process.ffreq,datax(i_rec).dt,process.ftype,1,datax(i_rec).data);
+            datax(i_rec).data=butterworth(process.forder,process.ffreq,datax(i_rec).dt,process.ftype,1,datax(i_rec).data);
         end
         if norm(datay(i_rec).data)~=0
-            datay(i_rec).data=buttwo(process.forder,process.ffreq,datay(i_rec).dt,process.ftype,1,datay(i_rec).data);
+            datay(i_rec).data=butterworth(process.forder,process.ffreq,datay(i_rec).dt,process.ftype,1,datay(i_rec).data);
         end
         if norm(dataz(i_rec).data)~=0
-            dataz(i_rec).data=buttwo(process.forder,process.ffreq,dataz(i_rec).dt,process.ftype,1,dataz(i_rec).data);
+            dataz(i_rec).data=butterworth(process.forder,process.ffreq,dataz(i_rec).dt,process.ftype,1,dataz(i_rec).data);
         end
         if norm(datap(i_rec).data)~=0
-            datap(i_rec).data=buttwo(process.forder,process.ffreq,datap(i_rec).dt,process.ftype,1,datap(i_rec).data);
+            datap(i_rec).data=butterworth(process.forder,process.ffreq,datap(i_rec).dt,process.ftype,1,datap(i_rec).data);
         end
     end
 end

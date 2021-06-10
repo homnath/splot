@@ -247,7 +247,7 @@ elseif rdata.type==3 % Synthetic data produced by SPECFEM3D
                 DATA(ichan).data=[];
                 continue;
             end
-            fnamex
+            
             inpf=fopen(fnamex,'r');            
             %DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
             % Extract t0, dt, and nsamp for the first time.
@@ -288,54 +288,95 @@ elseif rdata.type==32 % Synthetic data produced by SPECFEM3D and take the differ
     comp_read=['X','Y','Z','P']; % only for SPECFEM3D CARTESIAN
     comp=['E','N','Z','P']; % but we always process as ENZ components
     
-    % Read only the two time values of first file
-    fnamex=strcat(rdata.fheader,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
-    inpf=fopen(fnamex,'r');
-    t_info=fscanf(inpf,'%f %*f',[1 inf]);
-    fclose(inpf);
-    nsamp1=length(t_info);    
+%     % Read only the two time values of first file
+%     fnamex=strcat(rdata.fheader,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
+%     inpf=fopen(fnamex,'r');
+%     t_info=fscanf(inpf,'%f %*f',[1 inf]);
+%     fclose(inpf);
+%     nsamp1=length(t_info);    
+%     
+%     fnamex1=strcat(rdata.fheader1,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
+%     inpf1=fopen(fnamex1,'r');
+%     t_info1=fscanf(inpf1,'%f %*f',[1 inf]);
+%     fclose(inpf1);
+%     nsamp2=length(t_info1);
+%     
+%     nsamp=nsamp1;
+%     if nsamp1 ~= nsamp2
+%        fprintf(1,'WARNING: number of sampling points mismatched: %d, %d!\n',nsamp1,nsamp2);
+%        fprintf(1,'some of the recordings will be truncated!\n');
+%        nsamp=min([nsamp1, nsamp2]);
+%     end
+%     if t_info(1:nsamp) ~= t_info1(1:nsamp)
+%        error('time vectors mismatched!'); 
+%     end
+%     t0=t_info(1);
+%     dt=t_info(2)-t_info(1);  
+%     
+%     clear t_info t_info1;
     
-    fnamex1=strcat(rdata.fheader1,char(bulk{1}(1)),'.',char(bulk{2}(1)),'.','FX',comp_read(1),'.',rdata.ext);
-    inpf1=fopen(fnamex1,'r');
-    t_info1=fscanf(inpf1,'%f %*f',[1 inf]);
-    fclose(inpf1);
-    nsamp2=length(t_info1);
-    
-    nsamp=nsamp1;
-    if nsamp1 ~= nsamp2
-       fprintf(1,'WARNING: number of sampling points mismatched: %d, %d!\n',nsamp1,nsamp2);
-       fprintf(1,'some of the recordings will be truncated!\n');
-       nsamp=min([nsamp1, nsamp2]);
-    end
-    if t_info(1:nsamp) ~= t_info1(1:nsamp)
-       error('time vectors mismatched!'); 
-    end
-    t0=t_info(1);
-    dt=t_info(2)-t_info(1);  
-    
-    clear t_info t_info1;
-    
+    initialized=false;
     ichan=0;
     for i_rec=1:rdata.nrec
         for i_chan=1:4
             ichan=ichan+1;
-            fnamex=strcat(rdata.fheader,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
-            fnamex1=strcat(rdata.fheader1,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
-            inpf=fopen(fnamex,'r');
+            fnamex=strcat(rdata.fheader,char(bulk{2}(i_rec)),'.',char(bulk{1}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
+            fnamex1=strcat(rdata.fheader1,char(bulk{2}(i_rec)),'.',char(bulk{1}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
+            if ~exist(fnamex,'file')
+                warning('file ''%s'' not found!',fnamex);
+                DATA (ichan).chnum=[];
+                DATA(ichan).geonum=[];            
+                DATA(ichan).t0=[];
+                DATA(ichan).dt=[];
+                DATA(ichan).nsamp=[];
+                DATA(ichan).comp=comp(i_chan);
+                DATA(ichan).xyz=[];
+                DATA(ichan).data=[];
+                continue;
+            end
+            inpf=fopen(fnamex,'r'); 
             inpf1=fopen(fnamex1,'r');
-            DATA(ichan).chnum=ichan;
+            %DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
+            % Extract t0, dt, and nsamp for the first time.
+            if ~initialized      
+                data_tmp=fscanf(inpf,'%f %f',[2 inf])';
+                data_tmp1=fscanf(inpf1,'%f %f',[2 inf])';
+                initialized = true;
+                t0=data_tmp(1,1);
+                dt=data_tmp(2,1)-data_tmp(1,1);
+                nsamp=length(data_tmp);
+                DATA(ichan).data=data_tmp(:,2)-data_tmp1(:,2);
+            else
+                data_tmp=fscanf(inpf,'%*f %f',[1 inf])';
+                data_tmp1=fscanf(inpf1,'%*f %f',[1 inf])';
+                DATA(ichan).data=data_tmp-data_tmp1;
+            end
+            DATA (ichan).chnum=ichan;
             DATA(ichan).geonum=i_rec;            
             DATA(ichan).t0=t0;
             DATA(ichan).dt=dt;
             DATA(ichan).nsamp=nsamp;
             DATA(ichan).comp=comp(i_chan);
-            % data recordings
-            data1=fscanf(inpf,'%*f %f',[1 inf])';
-            data2=fscanf(inpf1,'%*f %f',[1 inf])';
-            DATA(ichan).data=data1(1:nsamp)-data2(1:nsamp);            
             DATA(ichan).xyz=[bulk{3}(i_rec) bulk{4}(i_rec) bulk{5}(i_rec)];
-            fclose(inpf);  
-            fclose(inpf1);
+            fclose(inpf);
+            fclose(inpf1);            
+                 
+%             fnamex1=strcat(rdata.fheader1,char(bulk{1}(i_rec)),'.',char(bulk{2}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
+%             inpf=fopen(fnamex,'r');
+%             inpf1=fopen(fnamex1,'r');
+%             DATA(ichan).chnum=ichan;
+%             DATA(ichan).geonum=i_rec;            
+%             DATA(ichan).t0=t0;
+%             DATA(ichan).dt=dt;
+%             DATA(ichan).nsamp=nsamp;
+%             DATA(ichan).comp=comp(i_chan);
+%             % data recordings
+%             data1=fscanf(inpf,'%*f %f',[1 inf])';
+%             data2=fscanf(inpf1,'%*f %f',[1 inf])';
+%             DATA(ichan).data=data1(1:nsamp)-data2(1:nsamp);            
+%             DATA(ichan).xyz=[bulk{3}(i_rec) bulk{4}(i_rec) bulk{5}(i_rec)];
+%             fclose(inpf);  
+%             fclose(inpf1);
         end 
     end
     clear bulk;
