@@ -14,7 +14,7 @@ dt=t(2)-t(1);
 %   ftype   : filter type (1: low, 2: band, 3: high) 
 %   fcausal : causal (1),  acausal (2)
 forder=3;
-ffreq=[0 0.5];
+ffreq=[0 500];
 ftype=2;
 fcasual=1;
 
@@ -24,3 +24,4 @@ figure
 hold on
 plot(t,data,'k');
 plot(t,data_filt,'b');
+legend('Original data','Filtered data')
