@@ -86,7 +86,6 @@ LINE TYPES
 Only the following line types are recognized.
  
 preinfo : preinformation
-model	: model parameters
 rdata	: receiver data parameters
 process	: process parameters 
 seisplot: options to plot seismograms
@@ -192,10 +191,11 @@ process
         	xrefrec: reference receiver number [non-negative integer]
     	if xrec=-4 also define the following parameter
         	xrefrec: reference receiver number [non-negative integer]
-		comp: components to process [string pointer] => default ENZ
+		comp: components to process [string pointer] => default ENZP
 		E -> East component
 		N -> North component
 		Z -> vertical component
+        P -> Pressure component
 		You can choose any combination of above letters e.g. E, EN, ENZ, and NZ will process only East components, only East and North components, all components, and only North and vertical components respectively.
 	tclip: clipping time of seismogram sections [s, positive real, 2d-vector] => default [0 09
 		clipping will be dome only for non-zero value, e.g., [0 0], [1 0], [0 2] and [1 2] will clip nothing, clip the section only before 1s, clip the section only after 2s, and clip the sections before 1s and after 2s respectively.

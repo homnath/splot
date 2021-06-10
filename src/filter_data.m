@@ -16,7 +16,7 @@ dt=t(2)-t(1);
 %   dt      : time increment
 %   ftype   : filter type (1: low, 2: band, 3: high) 
 %   fcausal : causal (1),  acausal (2)
-forder=3;
+forder=-3;
 fcasual=1;
 
 % Low pass
@@ -40,6 +40,7 @@ plot(t,data,'k');
 plot(t,data_low,'b');
 plot(t,data_band,'g');
 plot(t,data_high,'r');
+
 xlabel('Time (s)')
 ylabel('Pressure (Pa)')
 legend('Original Data','Low Pass','Band Pass','High Pass')

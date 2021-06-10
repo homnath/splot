@@ -4,7 +4,7 @@ function [DATA]=load_data(rdata,varargin)
 %   HNG, Nov 11,2009
 
 if nargin>1 && varargin{1}
-    load(cache_file,'DATA');
+    load('cache_file','DATA');
     return;
 end
 
