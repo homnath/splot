@@ -1,6 +1,6 @@
 # Preliminary information
 # type: 0: plot seismo, 1: plot de result
-preinfo type=0, plot=1, save=0, figform=png, figres=600, fighead=../output/train
+preinfo type=0, plot=1, save=1, figform=png, figres=600, fighead=../output/train
 
 # Receivers data information
 # 0: e3d computation; 1: MIMO .mat file
@@ -12,7 +12,7 @@ rdata type=3, fheader=../data, sfile=../data/STATIONS, ext=semp
 # Select receiver option (select - 0: all->'all'; 1: indicial selection-> r1,rstep,r2; 2: Circular selection-> refx,rad; 3: list from file-> rnfile)
 # Receiver selection as mentioned above
 # norm=(0: no normalization, 1: trace max, 2: geophone max, 3: absolute max, 4: first trace mean and absolute maximum)
-process select=1, r1=1, rstep=1, r2=2, comp=PZ, tclip=[0 0], noise=0, ffreq=[0 0], ftype=2, forder=3
+process select=1, r1=1, rstep=1, r2=2, comp=P, tclip=[0 0], noise=0, ffreq=[0 0], ftype=2, forder=3
 
 # norm (0: no normalization, 1: trace maximum, 2: geophone maximum, 3: absolute maximum, 4: trace mean and absolute maximum)
 # algn=4, area=4 smart choice

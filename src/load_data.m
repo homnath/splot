@@ -242,20 +242,24 @@ elseif rdata.type==3 % Synthetic data produced by SPECFEM3D
                 DATA(ichan).t0=[];
                 DATA(ichan).dt=[];
                 DATA(ichan).nsamp=[];
-                DATA(ichan).comp=[];
+                DATA(ichan).comp=comp(i_chan);
                 DATA(ichan).xyz=[];
                 DATA(ichan).data=[];
                 continue;
             end
             fnamex
             inpf=fopen(fnamex,'r');            
-            DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
+            %DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
             % Extract t0, dt, and nsamp for the first time.
-            if ~initialized            
+            if ~initialized      
+                data_tmp=fscanf(inpf,'%f %f',[2 inf])';
                 initialized = true;
-                t0=DATA(ichan).data(1);
-                dt=DATA(ichan).data(2)-DATA(ichan).data(1);
-                nsamp=length(DATA(ichan).data);
+                t0=data_tmp(1,1);
+                dt=data_tmp(2,1)-data_tmp(1,1);
+                nsamp=length(data_tmp);
+                DATA(ichan).data=data_tmp(:,2);
+            else
+                DATA(ichan).data=fscanf(inpf,'%*f %f',[1 inf])';
             end
             DATA (ichan).chnum=ichan;
             DATA(ichan).geonum=i_rec;            

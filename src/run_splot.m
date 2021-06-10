@@ -43,7 +43,7 @@ if preinfo.save>0
     addpath('./savefigure');
     [path]=fileparts(preinfo.fighead);
     if ~exist(path,'dir')
-        fprintf('WARNING: directory ''%s'' doesn''t exist! thus created\n',fighead);
+        fprintf(1,'WARNING: directory ''%s'' doesn''t exist! thus created\n',fighead);
         mkdir(path);
     end    
 end

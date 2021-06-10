@@ -148,10 +148,14 @@ datay=repmat(struct('data',0.0,'chnum',0,'geonum',0, ...
     'dt',0.0,'t0',0.0,'nsamp',1,'xyz',[NaN NaN NaN],'comp','N'),1,nrec);
 dataz=repmat(struct('data',0.0,'chnum',0,'geonum',0, ...
     'dt',0.0,'t0',0.0,'nsamp',1,'xyz',[NaN NaN NaN],'comp','Z'),1,nrec);
+datap=repmat(struct('data',0.0,'chnum',0,'geonum',0, ...
+    'dt',0.0,'t0',0.0,'nsamp',1,'xyz',[NaN NaN NaN],'comp','P'),1,nrec);
+
 
 datax=orderfields(datax);
 datay=orderfields(datay);
 dataz=orderfields(dataz);
+datap=orderfields(datap);
 
 % set appropriate DATA structures
 ichan=[DATA.comp]=='E';
@@ -173,13 +177,20 @@ irec=[DATA(ichan).geonum];
 dataz(irec_process)=DATA(ichan);
 rrz=rr_comb(ichan);
 
+ichan=[DATA.comp]=='P';
+irec=[DATA(ichan).geonum];
+[tf,irec_process]=ismember(irec,rec_id); % For all 3 components data only dataz(1:nrec)=DATA(ichan); is enough
+datap(irec_process)=DATA(ichan);
+rrp=rr_comb(ichan);
+
 % set to appropriate geophone number if any
 % this avoids the error during plotting some components of a geophone are missing
  for i_rec=1:nrec
-     geonum_correct=max([datax(i_rec).geonum datay(i_rec).geonum dataz(i_rec).geonum]);
+     geonum_correct=max([datax(i_rec).geonum datay(i_rec).geonum dataz(i_rec).geonum datap(i_rec).geonum]);
      datax(i_rec).geonum=geonum_correct;
      datay(i_rec).geonum=geonum_correct;
      dataz(i_rec).geonum=geonum_correct;
+     datap(i_rec).geonum=geonum_correct;
  end
  
 % for i=1:nchan
@@ -222,6 +233,9 @@ if max(process.ffreq)>0
         if norm(dataz(i_rec).data)~=0
             dataz(i_rec).data=buttwo(process.forder,process.ffreq,dataz(i_rec).dt,process.ftype,1,dataz(i_rec).data);
         end
+        if norm(datap(i_rec).data)~=0
+            datap(i_rec).data=buttwo(process.forder,process.ffreq,datap(i_rec).dt,process.ftype,1,datap(i_rec).data);
+        end
     end
 end
 
@@ -252,6 +266,14 @@ if max(process.erpf) > 0
             prederr(1:ncoef-1)=prederr(ncoef);
             dataz(i_rec).data=prederr;
         end
+        if norm(datap(i_rec).data)~=0
+            lwnoise=round(process.tnoise/datap(i_rec).dt);
+            ncoef=min(process.ncoef, lwnoise-1);
+            a=lpc(datap(i_rec).data(1:lwnoise),ncoef); %[a,g]=lpc(datap(i_rec).data(1:lwnoise),ncoef);
+            prederr=filter([1 real(a(2:ncoef))],1,datap(i_rec).data);
+            prederr(1:ncoef-1)=prederr(ncoef);
+            datap(i_rec).data=prederr;
+        end
     end
 end
 
@@ -259,6 +281,8 @@ end
 datax_old=datax;
 datay_old=datay;
 dataz_old=dataz;
+datap_old=datap;
+
 
 % % cross spectrum matrix
 % for i_rec=1:nrec
@@ -327,7 +351,7 @@ for i_plot=1:nplot
         if norm_fact==2            
             % Geophone maximum    
             for i_rec=1:nrec
-                geomax(i_rec)=max([max(abs(datax_old(i_rec).data)) max(abs(datay_old(i_rec).data)) max(abs(dataz_old(i_rec).data))]);
+                geomax(i_rec)=max([max(abs(datax_old(i_rec).data)) max(abs(datay_old(i_rec).data)) max(abs(dataz_old(i_rec).data)) max(abs(datap_old(i_rec).data))]);
             end
         end
         
@@ -515,6 +539,16 @@ for i_plot=1:nplot
                     outf=strcat(preinfo.fighead,'_original_trace_map_vertical',scount);
                     savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
                 end
+            end            
+            
+            if strfind(process.comp,'P')>0
+                figure(fig_prop1,fig_val1)
+                plot_seismap(datap_old,rr,norm_fact,plot_ampl,clip_ampl,geomax,optional)
+                title(['P component map, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+                if preinfo.save>0
+                    outf=strcat(preinfo.fighead,'_original_trace_map_pressure',scount);
+                    savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
+                end
             end
             fprintf(1,'complete!\n');
             continue;
@@ -555,6 +589,17 @@ for i_plot=1:nplot
                     savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
                 end
             end
+            
+            if strfind(process.comp,'P')>0
+                figure(fig_prop1,fig_val1)
+                plot_data(datap_old,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+                %title(['Z component, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+                if preinfo.save>0
+                    outf=strcat(preinfo.fighead,'_original_trace_pressure',scount);
+                    %print -depsc -r300 ~/publication/draft/seg2011/figure/py_myz_noise40_vert.eps
+                    savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
+                end
+            end
         elseif superpose==1
             figure(fig_prop1,fig_val1)
             hold on
@@ -567,7 +612,10 @@ for i_plot=1:nplot
             if strfind(process.comp,'Z')>0
                 plot_data(dataz_old,rr,norm_fact,plot_ampl,clip_ampl,'g',geomax,optional)
             end
-            title(['East (black), North (red) and Z (green) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+            if strfind(process.comp,'P')>0
+                plot_data(datap_old,rr,norm_fact,plot_ampl,clip_ampl,'b',geomax,optional)
+            end
+            title(['East (black), North (red), Z (green), P (blue) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
             if preinfo.save>0
                 outf=strcat(preinfo.fighead,'_original_traces',scount);
                 %print -depsc -r300 aaknes_synt.eps
@@ -585,6 +633,9 @@ for i_plot=1:nplot
             end
             if strfind(process.comp,'Z')>0
                 plot_data(dataz_old,rrz,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+            end
+            if strfind(process.comp,'P')>0
+                plot_data(datap_old,rrp,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
             end
             ylabel('Channels');
             set(gca,'box','on','ylim',ylim);
@@ -745,17 +796,19 @@ for i_plot=1:nplot
         datax=datax_old;
         datay=datay_old;
         dataz=dataz_old;
+        datap=datap_old;
         for i_rec=1:nrec
             datax(i_rec).data=abs(hilbert(datax_old(i_rec).data));
             datay(i_rec).data=abs(hilbert(datay_old(i_rec).data));
             dataz(i_rec).data=abs(hilbert(dataz_old(i_rec).data));
+            datap(i_rec).data=abs(hilbert(datap_old(i_rec).data));
         end
     
         geomax=zeros(1,nrec);
         if norm_fact==2
             % Geophone maximum
             for i_rec=1:nrec
-                geomax(i_rec)=max([max(abs(datax(i_rec).data)) max(abs(datay(i_rec).data)) max(abs(dataz(i_rec).data))]);
+                geomax(i_rec)=max([max(abs(datax(i_rec).data)) max(abs(datay(i_rec).data)) max(abs(dataz(i_rec).data)) max(abs(datap(i_rec).data))]);
             end
         end
         
@@ -789,6 +842,17 @@ for i_plot=1:nplot
                     savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
                 end
             end
+            
+            if strfind(process.comp,'P')>0
+                figure(fig_prop1,fig_val1)
+                plot_seismap(datap,rr,norm_fact,plot_ampl,clip_ampl,geomax,optional)
+                title(['Envelope -- P component map, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+                if preinfo.save>0
+                    outf=strcat(preinfo.fighead,'_envelope_map_pressure',scount);
+                    savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
+                end
+            end
+            
             fprintf(1,'complete!\n');
             continue;
         end
@@ -834,7 +898,17 @@ for i_plot=1:nplot
                     outf=strcat(preinfo.fighead,'_envelope_vertical',scount);
                     savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
                 end
-            end            
+            end
+            
+            if strfind(process.comp,'P')>0
+                figure(fig_prop1,fig_val1)
+                plot_data(datap,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+                title(['Envelope -- P component, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+                if preinfo.save>0
+                    outf=strcat(preinfo.fighead,'_envelope_pressure',scount);
+                    savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
+                end
+            end
         elseif superpose==1
             figure(fig_prop1,fig_val1)
             hold on
@@ -847,7 +921,10 @@ for i_plot=1:nplot
             if strfind(process.comp,'Z')>0
                 plot_data(dataz,rr,norm_fact,plot_ampl,clip_ampl,'g',geomax,optional)
             end
-            title(['Envelopes -- East (black), North (red) and Z (green) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+            if strfind(process.comp,'P')>0
+                plot_data(datap,rr,norm_fact,plot_ampl,clip_ampl,'b',geomax,optional)
+            end
+            title(['Envelopes -- East (black), North (red), Z (green), and P (Blue) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
             if preinfo.save>0
                 outf=strcat(preinfo.fighead,'_envelopes',scount);
                 savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
@@ -863,6 +940,9 @@ for i_plot=1:nplot
             end
             if strfind(process.comp,'Z')>0
                 plot_data(dataz,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+            end
+            if strfind(process.comp,'P')>0
+                plot_data(datap,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
             end
             
             set(gca,'box','on','ylim',ylim);
@@ -1045,6 +1125,7 @@ for i_plot=1:nplot
         datax=datax_old;
         datay=datay_old;
         dataz=dataz_old;
+        datap=datap_old;
         
         for i_rec = 1:nrec
             if datax(i_rec).nsamp>1 || datax(i_rec).dt~=0.0
@@ -1071,13 +1152,21 @@ for i_plot=1:nplot
                 % Compute SNR
                 [dataz(i_rec).data, dataz(i_rec).lta, dataz(i_rec).sta]=compute_SNR(dataz(i_rec),lwin,lwlta,lwsta);
             end
+            if datap(i_rec).nsamp>1 || datap(i_rec).dt~=0.0
+                %computation of sta, lta and sn for the filtered traces/geophones
+                lwsta=round(seisplot(i_plot).par.sta/datap(i_rec).dt);
+                lwlta=round(seisplot(i_plot).par.lta/datap(i_rec).dt);
+                lwin=lwsta+lwlta;
+                % Compute SNR
+                [datap(i_rec).data, datap(i_rec).lta, datap(i_rec).sta]=compute_SNR(datap(i_rec),lwin,lwlta,lwsta);
+            end
         end
         
         geomax=zeros(1,nrec);
         if norm_fact==1
             % Geophone maximum
             for i_rec=1:nrec
-                geomax(i_rec)=max([max(abs(datax(i_rec).data)) max(abs(datay(i_rec).data)) max(abs(dataz(i_rec).data))]);
+                geomax(i_rec)=max([max(abs(datax(i_rec).data)) max(abs(datay(i_rec).data)) max(abs(dataz(i_rec).data)) max(abs(datap(i_rec).data))]);
             end
         end
 
@@ -1111,6 +1200,16 @@ for i_plot=1:nplot
                     savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
                 end
             end
+            
+            if strfind(process.comp,'P')>0
+                figure(fig_prop1,fig_val1)
+                plot_data(datap,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+                title(['SNR -- P component, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+                if preinfo.save>0
+                    outf=strcat(preinfo.fighead,'_snr_pressure',scount);
+                    savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
+                end
+            end
         elseif superpose==1
             figure(fig_prop1,fig_val1)
             hold on
@@ -1123,7 +1222,10 @@ for i_plot=1:nplot
             if strfind(process.comp,'Z')>0
                 plot_data(dataz,rr,norm_fact,plot_ampl,clip_ampl,'g',geomax,optional)
             end
-            title(['SNR -- East (black), North (red) and Z (green) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
+            if strfind(process.comp,'P')>0
+                plot_data(dataz,rr,norm_fact,plot_ampl,clip_ampl,'b',geomax,optional)
+            end
+            title(['SNR -- East (black), North (red), Z (green), P(Blue) components, filter: ' num2str(process.ffreq(1)) ' to ' num2str(process.ffreq(2)) ' Hz']);
             if preinfo.save>0
                 outf=strcat(preinfo.fighead,'_snr',scount);
                 savefigure(outf,'Dpi',preinfo.figres,'po',preinfo.figform);
@@ -1139,6 +1241,9 @@ for i_plot=1:nplot
             end
             if strfind(process.comp,'Z')>0
                 plot_data(dataz,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
+            end
+            if strfind(process.comp,'P')>0
+                plot_data(datap,rr,norm_fact,plot_ampl,clip_ampl,'k',geomax,optional)
             end
             
             set(gca,'box','on','ylim',ylim);
