@@ -394,12 +394,12 @@ elseif rdata.type==4 % SEGY data
     nchan=n_traces;
     num_subsets=1; %n_traces/nchan;
     subset=1;
-    if num_subsets~=fix(num_subsets);
+    if num_subsets~=fix(num_subsets)
       disp('routine load_data: wrong number of channels per subset or wrong number of traces in the SEGY file')
       return
     end
     
-    if (subset<1 || subset> num_subsets);
+    if subset<1 || subset> num_subsets
       str=strcat('error invalid subset number:',num2str(subset),'max. number of sets:',num2str(num_subsets));
       disp(str)
       return;

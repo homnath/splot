@@ -34,7 +34,7 @@ seisplot=[];
 % Start reading file
 while ~feof(inpf)    
     str_line=fgetl(inpf);
-    if isempty(str_line);
+    if isempty(str_line)
         continue;
     end
     [token, remain]=strtok(str_line);

@@ -160,26 +160,26 @@ datap=orderfields(datap);
 % set appropriate DATA structures
 ichan=[DATA.comp]=='E';
 irec=[DATA(ichan).geonum];
-[tf,irec_process]=ismember(irec,rec_id); % For all 3 components data only datax(1:nrec)=DATA(ichan); is enough
+[~,irec_process]=ismember(irec,rec_id); % For all 3 components data only datax(1:nrec)=DATA(ichan); is enough
 datax(irec_process)=DATA(ichan);
 rrx=rr_comb(ichan);
 
 
 ichan=[DATA.comp]=='N';
 irec=[DATA(ichan).geonum];
-[tf,irec_process]=ismember(irec,rec_id); % For all 3 components data only datay(1:nrec)=DATA(ichan); is enough
+[~,irec_process]=ismember(irec,rec_id); % For all 3 components data only datay(1:nrec)=DATA(ichan); is enough
 datay(irec_process)=DATA(ichan);
 rry=rr_comb(ichan);
 
 ichan=[DATA.comp]=='Z';
 irec=[DATA(ichan).geonum];
-[tf,irec_process]=ismember(irec,rec_id); % For all 3 components data only dataz(1:nrec)=DATA(ichan); is enough
+[~,irec_process]=ismember(irec,rec_id); % For all 3 components data only dataz(1:nrec)=DATA(ichan); is enough
 dataz(irec_process)=DATA(ichan);
 rrz=rr_comb(ichan);
 
 ichan=[DATA.comp]=='P';
 irec=[DATA(ichan).geonum];
-[tf,irec_process]=ismember(irec,rec_id); % For all 3 components data only dataz(1:nrec)=DATA(ichan); is enough
+[~,irec_process]=ismember(irec,rec_id); % For all 3 components data only dataz(1:nrec)=DATA(ichan); is enough
 datap(irec_process)=DATA(ichan);
 rrp=rr_comb(ichan);
 
@@ -204,7 +204,7 @@ rrp=rr_comb(ichan);
 %datay(10).nsamp=1;
 %datay(10).data=0;
 
-clear DATA ichan irec irec_process tf rec_process geonum_correct
+clear DATA ichan irec irec_process rec_process geonum_correct
 % Denosing
 % fprintf(1,'denoising the signals...');
 % for i_rec=1:nrec
@@ -1340,7 +1340,7 @@ for i_plot=1:nplot
             pr2=seisplot(i_plot).par.r2;
             rp=pr1:prstep:pr2;
             nprec=length(rp);
-            [tf,irp]=ismember(rp,geonum);
+            [~,irp]=ismember(rp,geonum);
             for i_rec=1:nprec
                 if irp(i_rec) ~= 0
                     figure(fig_prop1,fig_val1)
@@ -1442,7 +1442,7 @@ for i_rec=1:nrec
 end
 
 %clipping
-for i_rec=1:nrec;
+for i_rec=1:nrec
  isamp=find(abs(splot{i_rec}) > clip_ampl);
  splot{i_rec}(isamp)=sign(splot{i_rec}(isamp))*clip_ampl;
 end
@@ -1467,7 +1467,7 @@ end
 
 if optional.onset>0    
     onset_h = 0.5*clip_ampl;
-    onset_w = 2.5;
+    %onset_w = 2.5;
     onset_wp = 2.0;
     onset_ws = 2.0;
     blue = [0.0 0.4 1.0];
@@ -1883,9 +1883,9 @@ eigenvec=V(:,ii(3));
   
 %compute azimuth
 alpha=atan2(eigenvec(1),eigenvec(2))*180/pi;
-if alpha<0.;
+if alpha<0.
   alpha=alpha+360.; 
-end;
+end
   
 %compute incidence angle
 gamma=acos(-eigenvec(3))*180/pi;
