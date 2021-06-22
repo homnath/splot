@@ -57,13 +57,9 @@ clear dist rec_ind
 
 % Throw other geophones' data
 rec_throw=[setdiff(rec_id,rec_process) xrec_list];
-for i_throw=1:nrec % maximum recursion is nrec
-	[~,ichan_throw]=ismember(rec_throw,[DATA.geonum]); % This gives only the maximum index therefore I need to do recursively    
-	if isempty(ichan_throw) || max(ichan_throw)==0
-        break;
-	end
-    chan_throw=nonzeros(ichan_throw)';    
-	
-    DATA(chan_throw)=[];    
+if ~isempty(rec_throw)
+    for i_throw=1:length(rec_throw)
+        DATA(rec_throw(i_throw)==[DATA.geonum])=[];
+    end
 end
 DATA_NEW=DATA;

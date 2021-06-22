@@ -19,8 +19,12 @@ dt=t(2)-t(1);
 %   dt      : time increment
 %   ftype   : filter type (1: low, 2: band, 3: high) 
 %   fcausal : causal (1),  acausal (2)
+<<<<<<< HEAD
 
 forder=3;
+=======
+forder=-3;
+>>>>>>> 5b367941d6443f60a26babdcfd7fd452d65d9ee5
 fcasual=1;
 
 
@@ -45,7 +49,12 @@ plot(t,data,'k');
 %plot(t,data_low,'b');
 %plot(t,Pressure1)
 plot(t,data_band,'g');
+<<<<<<< HEAD
 %plot(t,data_high,'r');
+=======
+plot(t,data_high,'r');
+
+>>>>>>> 5b367941d6443f60a26babdcfd7fd452d65d9ee5
 xlabel('Time (s)')
 ylabel('Pressure (Pa)')
 legend('Original Data','Low Pass','Band Pass','High Pass')

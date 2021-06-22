@@ -3,15 +3,14 @@
 preinfo type=0, plot=1, save=0, figform=png, figres=600, fighead=../output/train
 
 # Receivers data information
-# 0: e3d computation; 1: MIMO .mat file
 rdata type=3, fheader=../data, sfile=../data/STATIONS, ext=semp
 
 # Processing information
 # Select receiver option (select - 0: all->'all'; 1: indicial selection-> r1,rstep,r2; 2: Circular selection-> refx,rad; 3: list from file-> rnfile)
 # Receiver selection as mentioned above
 # norm=(0: no normalization, 1: trace max, 2: geophone max, 3: absolute max, 4: first trace mean and absolute maximum)
-process select=1, r1=1, rstep=1, r2=2, comp=P, tclip=[0 0], ffreq=[0 500], ftype=2, forder=3
+process select=1, r1=1, rstep=1, r2=1, comp=P, tclip=[0 0], ffreq=[10 500], ftype=2, forder=3
 
 # type= (0: trace, 1: rotated trace, 2: envelop, 3: rotated envelop, 4: SNR, 5: polarization)
 # norm (0: no normalization, 1: trace maximum, 2: geophone maximum, 3: absolute maximum, 4: trace mean and absolute maximum)
-seisplot type=0, norm=1, amp=15, clipamp=15
+seisplot type=0, norm=3, amp=15, clipamp=15

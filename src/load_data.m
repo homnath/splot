@@ -4,7 +4,7 @@ function [DATA]=load_data(rdata,varargin)
 %   HNG, Nov 11,2009
 
 if nargin>1 && varargin{1}
-    load(cache_file,'DATA');
+    load('cache_file','DATA');
     return;
 end
 
@@ -237,8 +237,8 @@ elseif rdata.type==3 % Synthetic data produced by SPECFEM3D
             fnamex=strcat(rdata.fheader,char(bulk{2}(i_rec)),'.',char(bulk{1}(i_rec)),'.','FX',comp_read(i_chan),'.',rdata.ext);
             if ~exist(fnamex,'file')
                 warning('file ''%s'' not found!',fnamex);
-                DATA (ichan).chnum=[];
-                DATA(ichan).geonum=[];            
+                DATA (ichan).chnum=ichan;
+                DATA(ichan).geonum=i_rec;            
                 DATA(ichan).t0=[];
                 DATA(ichan).dt=[];
                 DATA(ichan).nsamp=[];

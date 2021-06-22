@@ -5,7 +5,7 @@ if compute.njack > 0
     % Throw other geophones' data
     rec_throw=iloop;
     for i_throw=1:inf
-        [tf,ichan_throw]=ismember(rec_throw,[DATA.geonum]); % This gives only the maximum index therefore I need to do recursively
+        [~,ichan_throw]=ismember(rec_throw,[DATA.geonum]); % This gives only the maximum index therefore I need to do recursively
 
         if isempty(ichan_throw) || max(ichan_throw)==0
             break;
@@ -110,7 +110,7 @@ if max(process.erpf) > 0
     for i_chan = 1:nchan
         lwnoise=round(process.tnoise/DATA(i_chan).dt);
         ncoef=min(process.ncoef, lwnoise-1);
-        [a,g]=lpc(DATA(i_chan).data(1:lwnoise),ncoef);
+        [a,~]=lpc(DATA(i_chan).data(1:lwnoise),ncoef);
         prederr=filter([1 real(a(2:ncoef))],1,DATA(i_chan).data);
         prederr(1:ncoef-1)=prederr(ncoef);
         DATA(i_chan).data=prederr;        
@@ -189,7 +189,7 @@ for i_rec=1:rec.nrec
     rec.tend(i_rec)=max(tend_chan(ichan));
     rec.dt(i_rec)=max(dt_chan(ichan));
 end
-[rec_id,rec_chan]=unique([DATA.geonum]); % rec_chan gives the maximum channel index of each receiver
+[~,rec_chan]=unique([DATA.geonum]); % rec_chan gives the maximum channel index of each receiver
 rec.x=reshape([DATA(rec_chan).xyz],3,rec.nrec)'; % reshape fill the elements column-wise
 % if max(rec.x(:,3))<0
 %     rec.x(:,3)=-rec.x(:,3);
@@ -222,7 +222,7 @@ elseif compute.stype==2
         lwlta=round(compute.twin_lta/DATA(i_chan).dt);
         lwin=lwsta+lwlta;
         % Compute SNR
-        [hdata{i_chan},data_lta{i_chan},data_sta{i_chan}]=compute_SNR(DATA(i_chan).data,DATA(i_chan).nsamp,lwin,lwlta,lwsta);
+        [hdata{i_chan},~,~]=compute_SNR(DATA(i_chan).data,DATA(i_chan).nsamp,lwin,lwlta,lwsta);
         hdata{i_chan}=abs(hilbert(hdata{i_chan}));
     end
 else
