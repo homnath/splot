@@ -1,14 +1,14 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%==========================================================================
 % function filtered_data = butterworth(order,freq,dt,filtype,causal_flag,data)
 % lowpass butterworth filter
-% input : 
+% INPUT : 
 %         order         : order of butterworth  
 %         freq          : cut off frequency(ies)
 %         dt            : time increment
 %         filtype       : filter type (1: low, 2: band, 3: high) 
 %         causal_flag   : causal (1),  acausal (2)
 %         data                  : matrix with seismograms as columns
-% output: 
+% OUTPUT: 
 %         filtered_data         : matrix with filtered seismograms 
 %
 % NOTE!  acausal filtering increases order by factor 2 
@@ -17,7 +17,7 @@
 % maximum upper cutoff frequency is set to 0.9 * f_nyquist 
 %
 % Michael Roth 25.08.00
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%==========================================================================  
 
 function filtered_data = butterworth(order,freq,dt,filtype,causal_flag,data)
 

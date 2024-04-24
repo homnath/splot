@@ -31,7 +31,6 @@ sacfid = fopen(sacfile,'r','n');
 if sacfid==-1;
     %msg=sprintf('Invalid path: %s',sacfile);
     error('Invalid path: %s',sacfile);
-    return;
 end
 
 %The first 70 header variables are floating point
